@@ -1,5 +1,6 @@
 build/Desktop-Debug/*
 !./Makefile
+.cache/clangd/*
 
 # C++ objects and libs
 *.slo
