@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMediaPlayer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,8 +19,14 @@ public:
 
 public slots:
   void openDialog();
+  void openFile();  // Slot for opening a video file
+  void playPause(); // Slot for toggling play/pause
 
 private:
   Ui::MainWindow *ui;
+
+  QMediaPlayer *videoPlayer;
+
+  void setUpActions();
 };
 #endif // MAINWINDOW_H
