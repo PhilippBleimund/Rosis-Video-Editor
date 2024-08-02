@@ -1,8 +1,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QCloseEvent>
+#include <QDebug>
+#include <QFileDialog>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
+#include <QImage>
 #include <QMainWindow>
 #include <QMediaPlayer>
+#include <QMessageBox>
+#include <QPixmap>
+#include <QTimer>
+#include <qobjectdefs.h>
+
+#include "videoObj.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,14 +31,21 @@ public:
 
 public slots:
   void openDialog();
-  void openFile();  // Slot for opening a video file
-  void playPause(); // Slot for toggling play/pause
+  void openFile();    // Slot for opening a video file
+  void playPause();   // Slot for toggling play/pause
+  void updateFrame(); // slot for updating the current frame
+
+protected:
+  void setUpActions();
+  void closeEvent(QCloseEvent *);
+  void processVideo();
 
 private:
   Ui::MainWindow *ui;
-
-  QMediaPlayer *videoPlayer;
-
-  void setUpActions();
+  QMediaPlayer mediaPlayer;
+  QTimer *timer;
+  QGraphicsPixmapItem pixmap;
+  videoObj video;
+  bool isPlaying = false;
 };
 #endif // MAINWINDOW_H

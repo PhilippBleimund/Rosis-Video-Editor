@@ -1,23 +1,30 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include "QMessageBox"
-#include "QObject"
-#include "qmediaplayer.h"
 #include "qobjectdefs.h"
-#include <QFileDialog>
+#include <QMessageBox>
+#include <QObject>
+#include <qmediaplayer.h>
+#include <qobject.h>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), videoPlayer(new QMediaPlayer()),
-      ui(new Ui::MainWindow) {
+    : QMainWindow(parent), timer(new QTimer(this)), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
-  setUpActions();
+  ui->graphicsView->setScene(new QGraphicsScene(this));
+  ui->graphicsView->scene()->addItem(&pixmap);
 
-  this->videoPlayer->setVideoOutput(ui->video_widget);
+  setUpActions();
 }
 
 MainWindow::~MainWindow() {
   delete ui;
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+  if (video.isOpened()) {
+    video.release();
+    event->accept();
+  }
 }
 
 void MainWindow::setUpActions() {
@@ -29,6 +36,9 @@ void MainWindow::setUpActions() {
   // play Video
   QObject::connect(ui->actionPlay_Video, SIGNAL(triggered()), this,
                    SLOT(playPause()));
+
+  // connect timer to update Frames
+  QObject::connect(timer, SIGNAL(timeout()), this, SLOT(updateFrame()));
 }
 
 void MainWindow::openDialog() {
@@ -42,22 +52,45 @@ void MainWindow::openFile() {
   QString fileName =
       QFileDialog::getOpenFileName(this, tr("Open Movie"), QDir::homePath());
   if (!fileName.isEmpty()) {
-    videoPlayer->setSource(
-        QUrl::fromLocalFile(fileName)); // Set the source for the media player
+    video.open(fileName.toStdString());
+    if (!video.isOpened()) {
+      qDebug() << "Error: Could not open video.";
+      return;
+    }
+
+    // Start timer
+    timer->start(1000 / video.getFPS());
+
     ui->actionPlay_Video->setEnabled(true); // Enable the play button
   }
 }
 
 void MainWindow::playPause() {
-  if (videoPlayer->playbackState() == QMediaPlayer::PlayingState) {
-    videoPlayer->pause(); // Pause the video if it's currently playing
+  if (!video.isOpened())
+    return;
+
+  if (isPlaying) {
+    isPlaying = false;
+    mediaPlayer.pause();
 
     QIcon icon(QIcon::fromTheme(QString::fromUtf8("media-playback-start")));
     ui->actionPlay_Video->setIcon(icon);
   } else {
-    videoPlayer->play(); // Play the video if it's currently paused
+    isPlaying = true;
+    mediaPlayer.play(); // Play the video if it's currently paused
 
     QIcon icon(QIcon::fromTheme(QString::fromUtf8("media-playback-pause")));
     ui->actionPlay_Video->setIcon(icon);
+  }
+}
+
+void MainWindow::updateFrame() {
+  if (isPlaying && video.isOpened()) {
+    isPlaying = this->video.updateFrame();
+    if (isPlaying == false)
+      return;
+
+    pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
+    ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
   }
 }
