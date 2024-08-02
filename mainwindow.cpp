@@ -58,6 +58,8 @@ void MainWindow::openFile() {
       return;
     }
 
+    video.addText("test\ntest");
+
     // Start timer
     timer->start(1000 / video.getFPS());
 
