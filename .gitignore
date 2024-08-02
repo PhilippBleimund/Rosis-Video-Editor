@@ -1,5 +1,4 @@
 build/Desktop-Debug/*
-!./Makefile
 .cache/clangd/*
 
 # C++ objects and libs
@@ -31,7 +30,6 @@ qrc_*.cpp
 ui_*.h
 *.qmlc
 *.jsc
-Makefile*
 *build-*
 *.qm
 *.prl
