@@ -31,7 +31,7 @@ public:
   int getFPS();
   int getNumFrames();
   QImage getImage();
-  void addText(std::string);
+  int addText(std::string);
   virtual bool open(const cv::String &);
 
   bool updateFrame(); // slot for updating the current frame
