@@ -30,6 +30,9 @@ set(PROJECT_SOURCES
         mainwindow.ui
         videoObj.h
         videoObj.cpp
+        textinfobox.h
+        textinfobox.cpp
+        textinfobox.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
