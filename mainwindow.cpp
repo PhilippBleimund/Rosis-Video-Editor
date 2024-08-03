@@ -1,10 +1,13 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "qobjectdefs.h"
+#include "textinfobox.h"
+#include <QLabel>
 #include <QMessageBox>
 #include <QObject>
 #include <qmediaplayer.h>
 #include <qobject.h>
+#include <qpalette.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), timer(new QTimer(this)), ui(new Ui::MainWindow) {
@@ -12,6 +15,11 @@ MainWindow::MainWindow(QWidget *parent)
 
   ui->graphicsView->setScene(new QGraphicsScene(this));
   ui->graphicsView->scene()->addItem(&pixmap);
+
+  for (int i = 0; i < 20; i++) {
+    TextInfoBox *box = new TextInfoBox(ui->scrollAreaWidgetContents);
+    ui->verticalLayout->addWidget(box);
+  }
 
   setUpActions();
 }
