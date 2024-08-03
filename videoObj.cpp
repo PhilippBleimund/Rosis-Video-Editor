@@ -28,7 +28,7 @@ QImage videoObj::getImage() {
   return this->qtImage;
 }
 
-void videoObj::addText(std::string text) {
+int videoObj::addText(std::string text) {
   textInf newElement;
   newElement.text = text;
   newElement.color = cv::Scalar(0, 0, 0, 0);
@@ -40,6 +40,7 @@ void videoObj::addText(std::string text) {
   newElement.frameStart = 0;
 
   this->textList.push_back(newElement);
+  return textList.size() - 1;
 }
 
 bool videoObj::open(const cv::String &filename) {
