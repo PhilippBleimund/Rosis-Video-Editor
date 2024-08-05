@@ -15,19 +15,6 @@ enum fontStyles { Normal, Roman, Oblique, Italic };
 static const std::string stringFontStyles[] = {"Normal", "Roman", "Oblique",
                                                "Italic"};
 
-struct textInf {
-  std::string text;
-  int x_pos;
-  int y_pos;
-  std::string fontFace;
-  double fontScale;
-  cv::Scalar color;
-  bool fontItalic;
-  bool fontBold;
-  int frameStart;
-  int frameEnd;
-};
-
 class videoObj : public cv::VideoCapture {
 
 public:
