@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(Rosis-Video-Editor VERSION 0.1 LANGUAGES CXX)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_AUTOUIC ON)
@@ -11,10 +13,28 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include(CMakePrintHelpers)
+
 # set up opencv
 find_package(OpenCV REQUIRED )
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+# set up cairo
+find_package(Cairo REQUIRED)
+include_directories(${CAIRO_INCLUDE_DIRS})
+
+# set up pango
+find_package(Pango REQUIRED)
+include_directories(${Pango_INCLUDE_DIRS})
+
+find_package(PangoCairo REQUIRED)
+include_directories(${PangoCairo_INCLUDE_DIR})
+
+# set up gobject
+find_package(GObject REQUIRED)
+include_directories(${GOBJECT_INCLUDE_DIR})
+
+cmake_print_variables(Pango_INCLUDE_DIRS)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
@@ -58,7 +78,16 @@ else()
     endif()
 endif()
 
-target_link_libraries(Rosis-Video-Editor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia PRIVATE Qt${QT_VERSION_MAJOR}::MultimediaWidgets PRIVATE ${OpenCV_LIBS})
+target_link_libraries(Rosis-Video-Editor
+  PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
+  PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia
+  PRIVATE Qt${QT_VERSION_MAJOR}::MultimediaWidgets
+  ${OpenCV_LIBS}
+  ${CAIRO_LIBRARIES}
+  ${Pango_LIBRARY}
+  ${PangoCairo_LIBRARIES}
+  ${GOBJECT_LIBRARIES}
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
