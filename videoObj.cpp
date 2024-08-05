@@ -38,7 +38,6 @@ int videoObj::addText(std::string text) {
   textInf newElement;
   newElement.text = text;
   newElement.color = cv::Scalar(0, 0, 0, 0);
-  newElement.fontScale = 100;
   newElement.y_pos = 350;
   newElement.x_pos = 450;
   newElement.frameEnd = 250;

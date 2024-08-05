@@ -44,7 +44,6 @@ void TextInfoBox::updateFont() {
     // the user clicked OK and font is set to the font the user selected
     data_intern = font;
     // update textInf
-    data->fontFace = font.family().toStdString();
     data->fontDesc = font;
 
     emit updated(this);
