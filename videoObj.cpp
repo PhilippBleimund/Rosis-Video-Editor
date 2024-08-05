@@ -114,7 +114,7 @@ PangoFontDescription *convertQFontToPango(const QFont &qfont) {
 }
 
 void putTextCairo(cv::Mat &targetImage, std::string &text,
-                  cv::Point2d centerPoint, QFont &fontDesc, double fontSize,
+                  cv::Point2d centerPoint, QFont &fontDesc,
                   cv::Scalar textColor) {
 
   // Create Cairo
@@ -174,7 +174,7 @@ bool videoObj::updateFrame() {
       // text can be printed
       putTextCairo(frame, textObj.text,
                    cv::Point2d(textObj.x_pos, textObj.y_pos), textObj.fontDesc,
-                   textObj.fontScale, textObj.color);
+                   textObj.color);
     }
   }
 
