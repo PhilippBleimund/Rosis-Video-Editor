@@ -1,11 +1,14 @@
 #include "videoObj.h"
 #include "glib-object.h"
+#include "pango/pango-font.h"
+#include <iostream>
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/videoio.hpp>
 #include <pango/pangocairo.h>
 
 #include <QDebug>
+#include <qfont.h>
 #include <qimage.h>
 #include <qvideowidget.h>
 #include <sstream>
@@ -45,6 +48,10 @@ int videoObj::addText(std::string text) {
   return textList.size() - 1;
 }
 
+textInf *videoObj::getText(int index) {
+  return &this->textList.at(index);
+}
+
 bool videoObj::open(const cv::String &filename) {
   bool status = cv::VideoCapture::open(filename);
 
@@ -58,10 +65,57 @@ bool videoObj::open(const cv::String &filename) {
   return status;
 }
 
+PangoFontDescription *convertQFontToPango(const QFont &qfont) {
+  // PangoFontDescription erstellen
+  PangoFontDescription *pangoDesc = pango_font_description_new();
+
+  // Schriftname setzen
+  pango_font_description_set_family(pangoDesc,
+                                    qfont.family().toUtf8().constData());
+
+  // Schriftgröße in Pango-Einheiten setzen (1 Punkt = PANGO_SCALE
+  // Pango-Einheiten)
+  pango_font_description_set_size(pangoDesc, qfont.pointSize() * PANGO_SCALE);
+
+  // Schriftgewicht setzen
+  PangoWeight weight = PANGO_WEIGHT_NORMAL;
+  if (qfont.weight() == QFont::Thin) {
+    weight = PANGO_WEIGHT_THIN;
+  } else if (qfont.weight() == QFont::ExtraLight) {
+    weight = PANGO_WEIGHT_ULTRALIGHT;
+  } else if (qfont.weight() == QFont::Light) {
+    weight = PANGO_WEIGHT_LIGHT;
+  } else if (qfont.weight() == QFont::Normal) {
+    weight = PANGO_WEIGHT_NORMAL;
+  } else if (qfont.weight() == QFont::Medium) {
+    weight = PANGO_WEIGHT_MEDIUM;
+  } else if (qfont.weight() == QFont::DemiBold) {
+    weight = PANGO_WEIGHT_SEMIBOLD;
+  } else if (qfont.weight() == QFont::Bold) {
+    weight = PANGO_WEIGHT_BOLD;
+  } else if (qfont.weight() == QFont::ExtraBold) {
+    weight = PANGO_WEIGHT_ULTRABOLD;
+  } else if (qfont.weight() == QFont::Black) {
+    weight = PANGO_WEIGHT_HEAVY;
+  }
+  pango_font_description_set_weight(pangoDesc, weight);
+
+  // Schriftstil (kursiv) setzen
+  PangoStyle style = qfont.italic() ? PANGO_STYLE_ITALIC : PANGO_STYLE_NORMAL;
+  pango_font_description_set_style(pangoDesc, style);
+
+  // Unterstreichung (kein direktes Mapping in PangoFontDescription, separat
+  // handhabbar)
+
+  // Weitere Eigenschaften können nach Bedarf hinzugefügt werden
+  // ...
+
+  return pangoDesc;
+}
+
 void putTextCairo(cv::Mat &targetImage, std::string &text,
-                  cv::Point2d centerPoint, std::string &fontFace,
-                  double fontSize, cv::Scalar textColor, bool fontItalic,
-                  bool fontBold) {
+                  cv::Point2d centerPoint, QFont &fontDesc, double fontSize,
+                  cv::Scalar textColor) {
 
   // Create Cairo
   cairo_surface_t *surface = cairo_image_surface_create(
@@ -74,13 +128,10 @@ void putTextCairo(cv::Mat &targetImage, std::string &text,
   PangoFontDescription *desc;
 
   /* Create a PangoLayout, set the font and text */
-  std::stringstream font_desc;
-  font_desc << fontFace << " ";
-  font_desc << fontSize << " ";
 
   layout = pango_cairo_create_layout(cairo);
   pango_layout_set_text(layout, text.c_str(), -1);
-  desc = pango_font_description_from_string(font_desc.str().c_str());
+  desc = convertQFontToPango(fontDesc);
   pango_layout_set_font_description(layout, desc);
   pango_font_description_free(desc);
 
@@ -122,9 +173,8 @@ bool videoObj::updateFrame() {
     if (currFrame >= textObj.frameStart && currFrame <= textObj.frameEnd) {
       // text can be printed
       putTextCairo(frame, textObj.text,
-                   cv::Point2d(textObj.x_pos, textObj.y_pos), textObj.fontFace,
-                   textObj.fontScale, textObj.color, textObj.fontItalic,
-                   textObj.fontBold);
+                   cv::Point2d(textObj.x_pos, textObj.y_pos), textObj.fontDesc,
+                   textObj.fontScale, textObj.color);
     }
   }
 
@@ -134,4 +184,9 @@ bool videoObj::updateFrame() {
 
   currFrame++;
   return true;
+}
+
+void videoObj::repaintFrame() {
+  this->set(cv::CAP_PROP_POS_FRAMES, currFrame - 1);
+  updateFrame();
 }
