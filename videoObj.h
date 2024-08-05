@@ -11,14 +11,19 @@
 #include <qobjectdefs.h>
 #include <qtmetamacros.h>
 
+enum fontStyles { Normal, Roman, Oblique, Italic };
+static const std::string stringFontStyles[] = {"Normal", "Roman", "Oblique",
+                                               "Italic"};
+
 struct textInf {
-  cv::String text;
+  std::string text;
   int x_pos;
   int y_pos;
-  int fontFace;
+  std::string fontFace;
   double fontScale;
   cv::Scalar color;
-  int thickness;
+  bool fontItalic;
+  bool fontBold;
   int frameStart;
   int frameEnd;
 };
