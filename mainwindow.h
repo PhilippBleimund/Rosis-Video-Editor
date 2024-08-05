@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include <QTimer>
+#include <qcombobox.h>
 #include <qobjectdefs.h>
 
 #include "videoObj.h"
@@ -42,6 +43,7 @@ protected:
 
 private:
   Ui::MainWindow *ui;
+  QComboBox *stylesComboBox;
   QMediaPlayer mediaPlayer;
   QTimer *timer;
   QGraphicsPixmapItem pixmap;

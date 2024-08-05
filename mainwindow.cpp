@@ -2,19 +2,33 @@
 #include "./ui_mainwindow.h"
 #include "qobjectdefs.h"
 #include "textinfobox.h"
+#include "videoObj.h"
+#include <QComboBox>
 #include <QLabel>
 #include <QMessageBox>
 #include <QObject>
+#include <qcombobox.h>
+#include <qlabel.h>
 #include <qmediaplayer.h>
 #include <qobject.h>
 #include <qpalette.h>
+#include <string>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), timer(new QTimer(this)), ui(new Ui::MainWindow) {
+    : QMainWindow(parent), timer(new QTimer(this)), ui(new Ui::MainWindow),
+      stylesComboBox(new QComboBox(this)) {
   ui->setupUi(this);
 
   ui->graphicsView->setScene(new QGraphicsScene(this));
   ui->graphicsView->scene()->addItem(&pixmap);
+
+  ui->toolBar->addWidget(new QLabel("styles: "));
+  ui->toolBar->addWidget(stylesComboBox);
+  stylesComboBox->setEnabled(false);
+  for (int i = 0; i < 4; i++) {
+    stylesComboBox->addItem(
+        QString::fromLocal8Bit(stringFontStyles[i].c_str()));
+  }
 
   for (int i = 0; i < 20; i++) {
     TextInfoBox *box = new TextInfoBox(ui->scrollAreaWidgetContents);
