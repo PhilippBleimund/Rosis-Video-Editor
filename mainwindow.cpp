@@ -4,7 +4,9 @@
 #include "textinfobox.h"
 #include "videoObj.h"
 #include <QComboBox>
+#include <QInputDialog>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
 #include <QObject>
 #include <qcombobox.h>
@@ -28,11 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
   for (int i = 0; i < 4; i++) {
     stylesComboBox->addItem(
         QString::fromLocal8Bit(stringFontStyles[i].c_str()));
-  }
-
-  for (int i = 0; i < 20; i++) {
-    TextInfoBox *box = new TextInfoBox(ui->scrollAreaWidgetContents);
-    ui->verticalLayout->addWidget(box);
   }
 
   setUpActions();
@@ -59,8 +56,16 @@ void MainWindow::setUpActions() {
   QObject::connect(ui->actionPlay_Video, SIGNAL(triggered()), this,
                    SLOT(playPause()));
 
+  // add text
+  QObject::connect(ui->actionAddText, SIGNAL(triggered()), this,
+                   SLOT(textAdded()));
+
   // connect timer to update Frames
   QObject::connect(timer, SIGNAL(timeout()), this, SLOT(updateFrame()));
+
+  // connect style chooser to update video
+  QObject::connect(stylesComboBox, SIGNAL(currentIndexChanged()), this,
+                   SLOT(updateFontStyle()));
 }
 
 void MainWindow::openDialog() {
@@ -80,12 +85,30 @@ void MainWindow::openFile() {
       return;
     }
 
-    video.addText("test\ntest");
-
     // Start timer
     timer->start(1000 / video.getFPS());
 
     ui->actionPlay_Video->setEnabled(true); // Enable the play button
+  }
+}
+
+void MainWindow::textAdded() {
+  bool ok;
+  QString text = QInputDialog::getMultiLineText(
+      this, tr("QInputDialog::getText()"), tr("insert Text"), "", &ok);
+  if (ok && !text.isEmpty()) {
+    int index = video.addText(text.toStdString());
+
+    TextInfoBox *box =
+        new TextInfoBox(video.getText(index), ui->scrollAreaWidgetContents);
+    box->setText(text);
+    ui->verticalLayout->addWidget(box);
+    QObject::connect(box, SIGNAL(selected(TextInfoBox *)), this,
+                     SLOT(textSelected(TextInfoBox *)));
+    QObject::connect(box, SIGNAL(deselected(TextInfoBox *)), this,
+                     SLOT(textDeselected(TextInfoBox *)));
+    QObject::connect(box, SIGNAL(updated(TextInfoBox *)), this,
+                     SLOT(textUpdated(TextInfoBox *)));
   }
 }
 
@@ -117,4 +140,16 @@ void MainWindow::updateFrame() {
     pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
     ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
   }
+}
+
+void MainWindow::updateFontStyle() {
+}
+
+void MainWindow::textSelected(TextInfoBox *) {
+}
+
+void MainWindow::textDeselected(TextInfoBox *) {
+}
+
+void MainWindow::textUpdated(TextInfoBox *) {
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "textinfobox.h"
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/opencv.hpp>
@@ -24,9 +25,11 @@ public:
   int getNumFrames();
   QImage getImage();
   int addText(std::string);
+  textInf *getText(int);
   virtual bool open(const cv::String &);
 
   bool updateFrame(); // slot for updating the current frame
+  void repaintFrame();
 
 private:
   int fps;

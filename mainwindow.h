@@ -13,8 +13,10 @@
 #include <QPixmap>
 #include <QTimer>
 #include <qcombobox.h>
+#include <qevent.h>
 #include <qobjectdefs.h>
 
+#include "textinfobox.h"
 #include "videoObj.h"
 
 QT_BEGIN_NAMESPACE
@@ -32,9 +34,15 @@ public:
 
 public slots:
   void openDialog();
-  void openFile();    // Slot for opening a video file
-  void playPause();   // Slot for toggling play/pause
-  void updateFrame(); // slot for updating the current frame
+  void openFile();        // Slot for opening a video file
+  void playPause();       // Slot for toggling play/pause
+  void updateFrame();     // slot for updating the current frame
+  void updateFontStyle(); // Slot for updating the frame on style change
+  void textSelected(TextInfoBox *);   // Slot when text is selected
+  void textDeselected(TextInfoBox *); // Slot when text is deselected
+  void textUpdated(TextInfoBox *);    // Slot when information about
+                                      // the text instance is updated
+  void textAdded();
 
 protected:
   void setUpActions();
