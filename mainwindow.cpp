@@ -14,7 +14,6 @@
 #include <qmediaplayer.h>
 #include <qobject.h>
 #include <qpalette.h>
-#include <string>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), timer(new QTimer(this)), ui(new Ui::MainWindow),
@@ -23,14 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
 
   ui->graphicsView->setScene(new QGraphicsScene(this));
   ui->graphicsView->scene()->addItem(&pixmap);
-
-  ui->toolBar->addWidget(new QLabel("styles: "));
-  ui->toolBar->addWidget(stylesComboBox);
-  stylesComboBox->setEnabled(false);
-  for (int i = 0; i < 4; i++) {
-    stylesComboBox->addItem(
-        QString::fromLocal8Bit(stringFontStyles[i].c_str()));
-  }
 
   setUpActions();
 }
@@ -140,9 +131,6 @@ void MainWindow::updateFrame() {
     pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
     ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
   }
-}
-
-void MainWindow::updateFontStyle() {
 }
 
 void MainWindow::textSelected(TextInfoBox *) {

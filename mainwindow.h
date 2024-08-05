@@ -34,10 +34,9 @@ public:
 
 public slots:
   void openDialog();
-  void openFile();        // Slot for opening a video file
-  void playPause();       // Slot for toggling play/pause
-  void updateFrame();     // slot for updating the current frame
-  void updateFontStyle(); // Slot for updating the frame on style change
+  void openFile();                    // Slot for opening a video file
+  void playPause();                   // Slot for toggling play/pause
+  void updateFrame();                 // slot for updating the current frame
   void textSelected(TextInfoBox *);   // Slot when text is selected
   void textDeselected(TextInfoBox *); // Slot when text is deselected
   void textUpdated(TextInfoBox *);    // Slot when information about

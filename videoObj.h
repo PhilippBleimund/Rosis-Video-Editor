@@ -12,10 +12,6 @@
 #include <qobjectdefs.h>
 #include <qtmetamacros.h>
 
-enum fontStyles { Normal, Roman, Oblique, Italic };
-static const std::string stringFontStyles[] = {"Normal", "Roman", "Oblique",
-                                               "Italic"};
-
 class videoObj : public cv::VideoCapture {
 
 public:
