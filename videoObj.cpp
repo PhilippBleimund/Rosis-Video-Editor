@@ -1,11 +1,14 @@
 #include "videoObj.h"
+#include "glib-object.h"
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/videoio.hpp>
+#include <pango/pangocairo.h>
 
 #include <QDebug>
 #include <qimage.h>
 #include <qvideowidget.h>
+#include <sstream>
 #include <string>
 
 void videoObj::setFPS(int f) {
@@ -32,10 +35,9 @@ int videoObj::addText(std::string text) {
   textInf newElement;
   newElement.text = text;
   newElement.color = cv::Scalar(0, 0, 0, 0);
-  newElement.thickness = 3;
-  newElement.fontScale = 3;
-  newElement.y_pos = 150;
-  newElement.x_pos = 50;
+  newElement.fontScale = 100;
+  newElement.y_pos = 350;
+  newElement.x_pos = 450;
   newElement.frameEnd = 250;
   newElement.frameStart = 0;
 
@@ -56,29 +58,55 @@ bool videoObj::open(const cv::String &filename) {
   return status;
 }
 
-// Function to overlay text onto the video
-void overlayText(cv::Mat &frame, const std::string &text, int x, int y,
-                 double fontScale, int thickness, cv::Scalar color) {
+void putTextCairo(cv::Mat &targetImage, std::string &text,
+                  cv::Point2d centerPoint, std::string &fontFace,
+                  double fontSize, cv::Scalar textColor, bool fontItalic,
+                  bool fontBold) {
 
-  // split text in lines
-  std::vector<std::string> lines;
-  std::stringstream ss(text);
-  std::string item;
+  // Create Cairo
+  cairo_surface_t *surface = cairo_image_surface_create(
+      CAIRO_FORMAT_ARGB32, targetImage.cols, targetImage.rows);
 
-  while (getline(ss, item, '\n')) {
-    lines.push_back(item);
-  }
+  cairo_t *cairo = cairo_create(surface);
 
-  // add text line for line start at bottom
-  for (int i = lines.size() - 1; i >= 0; i--) {
-    int baseline = 0;
-    cv::Size textSize = cv::getTextSize(lines[i], cv::FONT_HERSHEY_SIMPLEX,
-                                        fontScale, thickness, &baseline);
-    // calculate new position for line
-    y = y + textSize.height;
-    cv::putText(frame, lines[i], cv::Point(x, y), cv::FONT_HERSHEY_SIMPLEX,
-                fontScale, color, thickness);
-  }
+  // Create pango
+  PangoLayout *layout;
+  PangoFontDescription *desc;
+
+  /* Create a PangoLayout, set the font and text */
+  std::stringstream font_desc;
+  font_desc << fontFace << " ";
+  font_desc << fontSize << " ";
+
+  layout = pango_cairo_create_layout(cairo);
+  pango_layout_set_text(layout, text.c_str(), -1);
+  desc = pango_font_description_from_string(font_desc.str().c_str());
+  pango_layout_set_font_description(layout, desc);
+  pango_font_description_free(desc);
+
+  // Wrap Cairo with a Mat
+  cv::Mat cairoTarget(cairo_image_surface_get_height(surface),
+                      cairo_image_surface_get_width(surface), CV_8UC4,
+                      cairo_image_surface_get_data(surface),
+                      cairo_image_surface_get_stride(surface));
+
+  // Put image onto Cairo
+  cv::cvtColor(targetImage, cairoTarget, cv::COLOR_BGR2BGRA);
+
+  cairo_set_source_rgb(cairo, textColor[2], textColor[1], textColor[0]);
+
+  // set position
+  cairo_move_to(cairo, centerPoint.x, centerPoint.y);
+
+  // Put Text onto image
+  pango_cairo_show_layout(cairo, layout);
+
+  // Copy the data to the output image
+  cv::cvtColor(cairoTarget, targetImage, cv::COLOR_BGRA2BGR);
+
+  g_object_unref(layout);
+  cairo_destroy(cairo);
+  cairo_surface_destroy(surface);
 }
 
 bool videoObj::updateFrame() {
@@ -93,8 +121,10 @@ bool videoObj::updateFrame() {
     textInf textObj = textList[i];
     if (currFrame >= textObj.frameStart && currFrame <= textObj.frameEnd) {
       // text can be printed
-      overlayText(frame, textObj.text, textObj.x_pos, textObj.y_pos,
-                  textObj.fontScale, textObj.thickness, textObj.color);
+      putTextCairo(frame, textObj.text,
+                   cv::Point2d(textObj.x_pos, textObj.y_pos), textObj.fontFace,
+                   textObj.fontScale, textObj.color, textObj.fontItalic,
+                   textObj.fontBold);
     }
   }
 
