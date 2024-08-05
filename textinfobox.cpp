@@ -2,10 +2,13 @@
 #include "ui_textinfobox.h"
 #include <QFontDialog>
 #include <QObject>
+#include <qfont.h>
 
 TextInfoBox::TextInfoBox(QWidget *parent)
     : QWidget(parent), ui(new Ui::TextInfoBox) {
   ui->setupUi(this);
+
+  data_intern = new QFont();
 
   QObject::connect(ui->editFont_Button, SIGNAL(clicked()), this,
                    SLOT(updateFont()));
