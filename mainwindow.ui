@@ -17,8 +17,8 @@
    <widget class="QGraphicsView" name="graphicsView">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
+      <x>80</x>
+      <y>30</y>
       <width>721</width>
       <height>461</height>
      </rect>
@@ -47,15 +47,6 @@
    <addaction name="menu_File"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="frames_dockWidget">
-   <property name="windowTitle">
-    <string>Frames</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2"/>
-  </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -71,7 +62,7 @@
    <addaction name="actionPlay_Video"/>
    <addaction name="actionStop_Video"/>
   </widget>
-  <widget class="QDockWidget" name="inspect_dockWidget">
+  <widget class="QDockWidget" name="text_dockWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
      <horstretch>0</horstretch>
@@ -91,7 +82,7 @@
     <bool>false</bool>
    </property>
    <property name="windowTitle">
-    <string>Inspector</string>
+    <string>Texts</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -108,8 +99,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>136</width>
-          <height>489</height>
+          <width>68</width>
+          <height>526</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout"/>
@@ -118,6 +109,15 @@
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QDockWidget" name="inspect_dockWidget">
+   <property name="windowTitle">
+    <string>Inspect</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_4"/>
   </widget>
   <action name="actionAddText">
    <property name="icon">
