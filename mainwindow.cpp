@@ -9,6 +9,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QObject>
+#include <QString>
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qmediaplayer.h>
@@ -61,6 +62,10 @@ void MainWindow::setUpActions() {
   // connect style chooser to update video
   QObject::connect(stylesComboBox, SIGNAL(currentIndexChanged()), this,
                    SLOT(updateFontStyle()));
+
+  // when text changed update frame
+  QObject::connect(ui->textEdit, SIGNAL(textChanged()), this,
+                   SLOT(textTextUpdated()));
 }
 
 void MainWindow::openDialog() {
@@ -106,9 +111,9 @@ void MainWindow::textAdded() {
     QObject::connect(box, SIGNAL(deselected(TextInfoBox *)), this,
                      SLOT(textDeselected(TextInfoBox *)));
     QObject::connect(box, SIGNAL(updated(TextInfoBox *)), this,
-                     SLOT(textUpdated(TextInfoBox *)));
+                     SLOT(textFontUpdated(TextInfoBox *)));
 
-    textUpdated(box);
+    textFontUpdated(box);
   }
 }
 
@@ -155,15 +160,28 @@ void MainWindow::restartVideo() {
   ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 }
 
-void MainWindow::textSelected(TextInfoBox *) {
+void MainWindow::textSelected(TextInfoBox *current) {
+  // load text into editor
+  this->current_selected = current;
+  this->ui->textEdit->setText(QString::fromUtf8(current->getData()->text));
 }
 
-void MainWindow::textDeselected(TextInfoBox *) {
+void MainWindow::textDeselected(TextInfoBox *current) {
+  this->ui->textEdit->setText(QString::fromUtf8(""));
+  this->current_selected = NULL;
 }
 
-void MainWindow::textUpdated(TextInfoBox *) {
+void MainWindow::textFontUpdated(TextInfoBox *) {
   if (!video.isOpened())
     return;
+
+  this->video.repaintFrame();
+  pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
+  ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
+}
+
+void MainWindow::textTextUpdated() {
+  this->current_selected->setText(ui->textEdit->toPlainText());
 
   this->video.repaintFrame();
   pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));

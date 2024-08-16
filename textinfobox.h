@@ -31,6 +31,7 @@ public:
   explicit TextInfoBox(textInf *, QWidget *parent = nullptr);
   ~TextInfoBox();
   void setText(QString);
+  textInf *getData();
 
 public slots:
   void updateFont();

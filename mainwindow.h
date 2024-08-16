@@ -34,15 +34,16 @@ public:
 
 public slots:
   void openDialog();
-  void openFile();                    // Slot for opening a video file
-  void playPause();                   // Slot for toggling play/pause
-  void updateFrame();                 // slot for updating the current frame
-  void restartVideo();                // Slot for restarting the current Video
-  void textSelected(TextInfoBox *);   // Slot when text is selected
-  void textDeselected(TextInfoBox *); // Slot when text is deselected
-  void textUpdated(TextInfoBox *);    // Slot when information about
-                                      // the text instance is updated
+  void openFile();                     // Slot for opening a video file
+  void playPause();                    // Slot for toggling play/pause
+  void updateFrame();                  // slot for updating the current frame
+  void restartVideo();                 // Slot for restarting the current Video
+  void textSelected(TextInfoBox *);    // Slot when text is selected
+  void textDeselected(TextInfoBox *);  // Slot when text is deselected
+  void textFontUpdated(TextInfoBox *); // Slot when information about
+                                       // the text instance is updated
   void textAdded();
+  void textTextUpdated();
 
 protected:
   void setUpActions();
@@ -56,5 +57,6 @@ private:
   QGraphicsPixmapItem pixmap;
   videoObj video;
   bool isPlaying = false;
+  TextInfoBox *current_selected;
 };
 #endif // MAINWINDOW_H

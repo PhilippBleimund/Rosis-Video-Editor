@@ -8,6 +8,7 @@
 #include <qglobal.h>
 #include <qnamespace.h>
 #include <qobject.h>
+#include <qpalette.h>
 #include <qtmetamacros.h>
 #include <sstream>
 
@@ -15,6 +16,7 @@ TextInfoBox::TextInfoBox(textInf *data, QWidget *parent)
     : QWidget(parent), ui(new Ui::TextInfoBox) {
   ui->setupUi(this);
   this->data = data;
+  this->ui->label->setText(QString::fromUtf8(data->text));
 
   data_intern = *new QFont();
 
@@ -35,6 +37,11 @@ TextInfoBox::~TextInfoBox() {
 
 void TextInfoBox::setText(QString text) {
   this->ui->label->setText(text);
+  this->data->text = text.toStdString();
+}
+
+textInf *TextInfoBox::getData() {
+  return this->data;
 }
 
 void TextInfoBox::updateFont() {
