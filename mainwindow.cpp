@@ -104,6 +104,8 @@ void MainWindow::textAdded() {
                      SLOT(textDeselected(TextInfoBox *)));
     QObject::connect(box, SIGNAL(updated(TextInfoBox *)), this,
                      SLOT(textUpdated(TextInfoBox *)));
+
+    textUpdated(box);
   }
 }
 
@@ -157,4 +159,10 @@ void MainWindow::textDeselected(TextInfoBox *) {
 }
 
 void MainWindow::textUpdated(TextInfoBox *) {
+  if (!video.isOpened())
+    return;
+
+  this->video.repaintFrame();
+  pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
+  ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 }
