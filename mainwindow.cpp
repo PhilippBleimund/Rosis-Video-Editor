@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "customGraphicsView.h"
 #include "qobjectdefs.h"
 #include "textinfobox.h"
 #include "videoObj.h"
@@ -11,6 +12,7 @@
 #include <QObject>
 #include <QString>
 #include <qcombobox.h>
+#include <qglobal.h>
 #include <qlabel.h>
 #include <qmediaplayer.h>
 #include <qobject.h>
@@ -69,6 +71,10 @@ void MainWindow::setUpActions() {
   // when text changed update frame
   QObject::connect(ui->textEdit, SIGNAL(textChanged()), this,
                    SLOT(textTextUpdated()));
+
+  // when move is detected try to move text
+  QObject::connect(graphicsView, SIGNAL(mouseMoved(move_op)), this,
+                   SLOT(textMoved(move_op)));
 }
 
 void MainWindow::openDialog() {
@@ -188,4 +194,15 @@ void MainWindow::textTextUpdated() {
   this->video.repaintFrame();
   pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
   this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
+}
+
+void MainWindow::textMoved(move_op event) {
+  if (current_selected != NULL) {
+    current_selected->getData()->x_pos += event.x_delta;
+    current_selected->getData()->y_pos += event.y_delta;
+
+    this->video.repaintFrame();
+    pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
+    this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
+  }
 }

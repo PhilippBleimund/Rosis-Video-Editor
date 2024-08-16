@@ -45,6 +45,7 @@ public slots:
                                        // the text instance is updated
   void textAdded();
   void textTextUpdated();
+  void textMoved(move_op);
 
 protected:
   void setUpActions();
