@@ -26,6 +26,7 @@ public:
 
   bool updateFrame(); // slot for updating the current frame
   void repaintFrame();
+  void setToStart();
 
 private:
   int fps;

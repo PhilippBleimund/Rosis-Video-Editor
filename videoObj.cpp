@@ -163,6 +163,7 @@ bool videoObj::updateFrame() {
   *this >> frame;
   if (frame.empty()) {
     qDebug() << "End of video.";
+    setToStart();
     return false;
   }
 
@@ -186,6 +187,12 @@ bool videoObj::updateFrame() {
 }
 
 void videoObj::repaintFrame() {
-  this->set(cv::CAP_PROP_POS_FRAMES, currFrame - 1);
+  this->set(cv::CAP_PROP_POS_FRAMES, --currFrame);
+  updateFrame();
+}
+
+void videoObj::setToStart() {
+  this->set(cv::CAP_PROP_POS_FRAMES, 0);
+  currFrame = 0;
   updateFrame();
 }

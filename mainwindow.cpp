@@ -47,6 +47,10 @@ void MainWindow::setUpActions() {
   QObject::connect(ui->actionPlay_Video, SIGNAL(triggered()), this,
                    SLOT(playPause()));
 
+  // reset Video to start
+  QObject::connect(ui->actionStop_Video, SIGNAL(triggered()), this,
+                   SLOT(restartVideo()));
+
   // add text
   QObject::connect(ui->actionAddText, SIGNAL(triggered()), this,
                    SLOT(textAdded()));
@@ -123,12 +127,27 @@ void MainWindow::playPause() {
 void MainWindow::updateFrame() {
   if (isPlaying && video.isOpened()) {
     isPlaying = this->video.updateFrame();
-    if (isPlaying == false)
-      return;
+    if (isPlaying == false) {
+      QIcon icon(QIcon::fromTheme(QString::fromUtf8("media-playback-start")));
+      ui->actionPlay_Video->setIcon(icon);
+    }
 
     pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
     ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
   }
+}
+
+void MainWindow::restartVideo() {
+  if (!video.isOpened())
+    return;
+
+  isPlaying = false;
+  QIcon icon(QIcon::fromTheme(QString::fromUtf8("media-playback-start")));
+  ui->actionPlay_Video->setIcon(icon);
+  video.setToStart();
+
+  pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
+  ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 }
 
 void MainWindow::textSelected(TextInfoBox *) {
