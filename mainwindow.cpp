@@ -79,6 +79,9 @@ void MainWindow::openFile() {
       qDebug() << "Error: Could not open video.";
       return;
     }
+    video.updateFrame();
+    pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
+    ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 
     // Start timer
     timer->start(1000 / video.getFPS());
