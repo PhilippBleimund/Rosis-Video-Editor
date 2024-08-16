@@ -51,7 +51,6 @@ protected:
 private:
   Ui::MainWindow *ui;
   QComboBox *stylesComboBox;
-  QMediaPlayer mediaPlayer;
   QTimer *timer;
   QGraphicsPixmapItem pixmap;
   videoObj video;

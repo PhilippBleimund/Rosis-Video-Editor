@@ -109,13 +109,11 @@ void MainWindow::playPause() {
 
   if (isPlaying) {
     isPlaying = false;
-    mediaPlayer.pause();
 
     QIcon icon(QIcon::fromTheme(QString::fromUtf8("media-playback-start")));
     ui->actionPlay_Video->setIcon(icon);
   } else {
     isPlaying = true;
-    mediaPlayer.play(); // Play the video if it's currently paused
 
     QIcon icon(QIcon::fromTheme(QString::fromUtf8("media-playback-pause")));
     ui->actionPlay_Video->setIcon(icon);
