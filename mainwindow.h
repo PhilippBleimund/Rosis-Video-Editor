@@ -16,6 +16,7 @@
 #include <qevent.h>
 #include <qobjectdefs.h>
 
+#include "customGraphicsView.h"
 #include "textinfobox.h"
 #include "videoObj.h"
 
@@ -58,5 +59,6 @@ private:
   videoObj video;
   bool isPlaying = false;
   TextInfoBox *current_selected;
+  CustomGraphicsView *graphicsView;
 };
 #endif // MAINWINDOW_H

@@ -18,11 +18,14 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), timer(new QTimer(this)), ui(new Ui::MainWindow),
-      stylesComboBox(new QComboBox(this)) {
+      stylesComboBox(new QComboBox(this)),
+      graphicsView(new CustomGraphicsView(this)) {
   ui->setupUi(this);
 
-  ui->graphicsView->setScene(new QGraphicsScene(this));
-  ui->graphicsView->scene()->addItem(&pixmap);
+  this->setCentralWidget(this->graphicsView);
+
+  this->graphicsView->setScene(new QGraphicsScene(this));
+  this->graphicsView->scene()->addItem(&pixmap);
 
   setUpActions();
 }
@@ -86,7 +89,7 @@ void MainWindow::openFile() {
     }
     video.updateFrame();
     pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
-    ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
+    this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 
     // Start timer
     timer->start(1000 / video.getFPS());
@@ -104,7 +107,6 @@ void MainWindow::textAdded() {
 
     TextInfoBox *box =
         new TextInfoBox(video.getText(index), ui->scrollAreaWidgetContents);
-    box->setText(text);
     ui->verticalLayout->addWidget(box);
     QObject::connect(box, SIGNAL(selected(TextInfoBox *)), this,
                      SLOT(textSelected(TextInfoBox *)));
@@ -143,7 +145,7 @@ void MainWindow::updateFrame() {
     }
 
     pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
-    ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
+    this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
   }
 }
 
@@ -157,7 +159,7 @@ void MainWindow::restartVideo() {
   video.setToStart();
 
   pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
-  ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
+  this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 }
 
 void MainWindow::textSelected(TextInfoBox *current) {
@@ -177,7 +179,7 @@ void MainWindow::textFontUpdated(TextInfoBox *) {
 
   this->video.repaintFrame();
   pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
-  ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
+  this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 }
 
 void MainWindow::textTextUpdated() {
@@ -185,5 +187,5 @@ void MainWindow::textTextUpdated() {
 
   this->video.repaintFrame();
   pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
-  ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
+  this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 }

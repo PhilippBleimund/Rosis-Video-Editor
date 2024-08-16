@@ -53,6 +53,8 @@ set(PROJECT_SOURCES
         textinfobox.h
         textinfobox.cpp
         textinfobox.ui
+        customGraphicsView.h
+        customGraphicsView.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
