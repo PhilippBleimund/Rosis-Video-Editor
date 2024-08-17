@@ -10,7 +10,6 @@
 #include <qobject.h>
 #include <qpalette.h>
 #include <qtmetamacros.h>
-#include <sstream>
 
 TextInfoBox::TextInfoBox(textInf *data, QWidget *parent)
     : QWidget(parent), ui(new Ui::TextInfoBox) {

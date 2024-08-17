@@ -44,17 +44,17 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS MultimediaWidgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS MultimediaWidgets)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        videoObj.h
-        videoObj.cpp
-        textinfobox.h
-        textinfobox.cpp
-        textinfobox.ui
-        customGraphicsView.h
-        customGraphicsView.cpp
+        src/main.cpp
+        src/mainwindow.cpp
+        src/mainwindow.h
+        src/mainwindow.ui
+        src/videoObj.h
+        src/videoObj.cpp
+        src/textinfobox.h
+        src/textinfobox.cpp
+        src/textinfobox.ui
+        src/customGraphicsView.h
+        src/customGraphicsView.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
