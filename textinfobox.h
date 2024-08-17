@@ -17,6 +17,8 @@ struct textInf {
   std::string text;
   int x_pos;
   int y_pos;
+  int x_delta;
+  int y_delta;
   QFont fontDesc;
   cv::Scalar color;
   int frameStart;

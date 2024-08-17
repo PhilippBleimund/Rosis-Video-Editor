@@ -40,6 +40,8 @@ int videoObj::addText(std::string text) {
   newElement.color = cv::Scalar(0, 0, 0, 0);
   newElement.y_pos = 350;
   newElement.x_pos = 450;
+  newElement.x_delta = 0;
+  newElement.y_delta = 0;
   newElement.frameEnd = 250;
   newElement.frameStart = 0;
 
@@ -173,8 +175,9 @@ bool videoObj::updateFrame() {
     if (currFrame >= textObj.frameStart && currFrame <= textObj.frameEnd) {
       // text can be printed
       putTextCairo(frame, textObj.text,
-                   cv::Point2d(textObj.x_pos, textObj.y_pos), textObj.fontDesc,
-                   textObj.color);
+                   cv::Point2d(textObj.x_pos + textObj.x_delta,
+                               textObj.y_pos + textObj.y_delta),
+                   textObj.fontDesc, textObj.color);
     }
   }
 

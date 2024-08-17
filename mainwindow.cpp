@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
   this->graphicsView->setScene(new QGraphicsScene(this));
   this->graphicsView->scene()->addItem(&pixmap);
 
+  this->current_selected = nullptr;
+
   setUpActions();
 }
 
@@ -197,9 +199,9 @@ void MainWindow::textTextUpdated() {
 }
 
 void MainWindow::textMoved(move_op event) {
-  if (current_selected != NULL) {
-    current_selected->getData()->x_pos += event.x_delta;
-    current_selected->getData()->y_pos += event.y_delta;
+  if (video.isOpened() && current_selected != nullptr) {
+    current_selected->getData()->x_delta = event.x_delta;
+    current_selected->getData()->y_delta = event.y_delta;
 
     this->video.repaintFrame();
     pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
