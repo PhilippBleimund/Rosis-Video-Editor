@@ -1,13 +1,17 @@
 #pragma once
 
+#include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QWidget>
 #include <qevent.h>
+#include <qsize.h>
 
 struct move_op {
   QPoint start;
   int x_delta;
   int y_delta;
+  int x_transformed;
+  int y_transformed;
 };
 
 class CustomGraphicsView : public QGraphicsView {
@@ -15,6 +19,8 @@ class CustomGraphicsView : public QGraphicsView {
 
 public:
   CustomGraphicsView(QWidget *parent = nullptr);
+  void fitInView(const QGraphicsItem *item,
+                 Qt::AspectRatioMode aspectRatioMode = Qt::IgnoreAspectRatio);
 public slots:
 
 signals:
@@ -26,6 +32,9 @@ protected:
   void mouseMoveEvent(QMouseEvent *);
 
 private:
+  QPoint calcTransformedPos(QPoint pos, QSize source, QSize view);
+  QSize source_size;
   QPoint start;
+  QPoint start_transformed;
   bool is_pressed;
 };
