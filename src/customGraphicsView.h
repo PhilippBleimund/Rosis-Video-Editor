@@ -8,10 +8,8 @@
 
 struct move_op {
   QPoint start;
-  int x_delta;
-  int y_delta;
-  int x_transformed;
-  int y_transformed;
+  QPoint delta;
+  QPoint transformed;
 };
 
 class CustomGraphicsView : public QGraphicsView {

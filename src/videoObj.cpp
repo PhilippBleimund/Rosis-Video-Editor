@@ -1,7 +1,7 @@
 #include "videoObj.h"
 #include "glib-object.h"
 #include "pango/pango-font.h"
-#include <iostream>
+#include "textInformation.h"
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/videoio.hpp>
@@ -11,7 +11,6 @@
 #include <qfont.h>
 #include <qimage.h>
 #include <qvideowidget.h>
-#include <sstream>
 #include <string>
 
 void videoObj::setFPS(int f) {
@@ -35,21 +34,14 @@ QImage videoObj::getImage() {
 }
 
 int videoObj::addText(std::string text) {
-  textInf newElement;
-  newElement.text = text;
-  newElement.color = cv::Scalar(0, 0, 0, 0);
-  newElement.y_pos = 350;
-  newElement.x_pos = 450;
-  newElement.x_delta = 0;
-  newElement.y_delta = 0;
-  newElement.frameEnd = 250;
-  newElement.frameStart = 0;
-
+  textInformation newElement =
+      textInformation(text, QPoint(0, 0), QPoint(0, 0), QFont(),
+                      cv::Scalar(0, 0, 0), 0, 250, nullptr);
   this->textList.push_back(newElement);
   return textList.size() - 1;
 }
 
-textInf *videoObj::getText(int index) {
+textInformation *videoObj::getText(int index) {
   return &this->textList.at(index);
 }
 
@@ -66,56 +58,8 @@ bool videoObj::open(const cv::String &filename) {
   return status;
 }
 
-PangoFontDescription *convertQFontToPango(const QFont &qfont) {
-  // PangoFontDescription erstellen
-  PangoFontDescription *pangoDesc = pango_font_description_new();
-
-  // Schriftname setzen
-  pango_font_description_set_family(pangoDesc,
-                                    qfont.family().toUtf8().constData());
-
-  // Schriftgröße in Pango-Einheiten setzen (1 Punkt = PANGO_SCALE
-  // Pango-Einheiten)
-  pango_font_description_set_size(pangoDesc, qfont.pointSize() * PANGO_SCALE);
-
-  // Schriftgewicht setzen
-  PangoWeight weight = PANGO_WEIGHT_NORMAL;
-  if (qfont.weight() == QFont::Thin) {
-    weight = PANGO_WEIGHT_THIN;
-  } else if (qfont.weight() == QFont::ExtraLight) {
-    weight = PANGO_WEIGHT_ULTRALIGHT;
-  } else if (qfont.weight() == QFont::Light) {
-    weight = PANGO_WEIGHT_LIGHT;
-  } else if (qfont.weight() == QFont::Normal) {
-    weight = PANGO_WEIGHT_NORMAL;
-  } else if (qfont.weight() == QFont::Medium) {
-    weight = PANGO_WEIGHT_MEDIUM;
-  } else if (qfont.weight() == QFont::DemiBold) {
-    weight = PANGO_WEIGHT_SEMIBOLD;
-  } else if (qfont.weight() == QFont::Bold) {
-    weight = PANGO_WEIGHT_BOLD;
-  } else if (qfont.weight() == QFont::ExtraBold) {
-    weight = PANGO_WEIGHT_ULTRABOLD;
-  } else if (qfont.weight() == QFont::Black) {
-    weight = PANGO_WEIGHT_HEAVY;
-  }
-  pango_font_description_set_weight(pangoDesc, weight);
-
-  // Schriftstil (kursiv) setzen
-  PangoStyle style = qfont.italic() ? PANGO_STYLE_ITALIC : PANGO_STYLE_NORMAL;
-  pango_font_description_set_style(pangoDesc, style);
-
-  // Unterstreichung (kein direktes Mapping in PangoFontDescription, separat
-  // handhabbar)
-
-  // Weitere Eigenschaften können nach Bedarf hinzugefügt werden
-  // ...
-
-  return pangoDesc;
-}
-
-void putTextCairo(cv::Mat &targetImage, std::string &text,
-                  cv::Point2d centerPoint, QFont &fontDesc,
+void putTextCairo(cv::Mat &targetImage, std::string text,
+                  cv::Point2d centerPoint, PangoFontDescription *pango_desc,
                   cv::Scalar textColor) {
 
   // Create Cairo
@@ -126,15 +70,13 @@ void putTextCairo(cv::Mat &targetImage, std::string &text,
 
   // Create pango
   PangoLayout *layout;
-  PangoFontDescription *desc;
 
   /* Create a PangoLayout, set the font and text */
 
   layout = pango_cairo_create_layout(cairo);
   pango_layout_set_text(layout, text.c_str(), -1);
-  desc = convertQFontToPango(fontDesc);
-  pango_layout_set_font_description(layout, desc);
-  pango_font_description_free(desc);
+  pango_layout_set_font_description(layout, pango_desc);
+  pango_font_description_free(pango_desc);
 
   // Wrap Cairo with a Mat
   cv::Mat cairoTarget(cairo_image_surface_get_height(surface),
@@ -171,13 +113,12 @@ bool videoObj::updateFrame() {
 
   // check if text is available
   for (int i = 0; i < textList.size(); i++) {
-    textInf textObj = textList[i];
-    if (currFrame >= textObj.frameStart && currFrame <= textObj.frameEnd) {
+    textInformation textObj = textList[i];
+    if (currFrame >= textObj.getFrameStart() &&
+        currFrame <= textObj.getFrameEnd()) {
       // text can be printed
-      putTextCairo(frame, textObj.text,
-                   cv::Point2d(textObj.x_pos + textObj.x_delta,
-                               textObj.y_pos + textObj.y_delta),
-                   textObj.fontDesc, textObj.color);
+      putTextCairo(frame, textObj.getText(), textObj.getPosition_as_cvPoint(),
+                   textObj.getFont_as_Pango(), textObj.getColor());
     }
   }
 

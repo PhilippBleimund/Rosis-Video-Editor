@@ -7,33 +7,21 @@
 #include <qfont.h>
 #include <qobject.h>
 #include <qpalette.h>
-#include <string>
 
 namespace Ui {
 class TextInfoBox;
 }
 
-struct textInf {
-  std::string text;
-  int x_pos;
-  int y_pos;
-  int x_delta;
-  int y_delta;
-  QFont fontDesc;
-  cv::Scalar color;
-  int frameStart;
-  int frameEnd;
-  Ui::TextInfoBox *uiElement;
-};
+class textInformation;
 
 class TextInfoBox : public QWidget {
   Q_OBJECT
 
 public:
-  explicit TextInfoBox(textInf *, QWidget *parent = nullptr);
+  explicit TextInfoBox(textInformation *, QWidget *parent = nullptr);
   ~TextInfoBox();
   void setText(QString);
-  textInf *getData();
+  textInformation *getData();
 
 public slots:
   void updateFont();
@@ -48,7 +36,7 @@ protected:
 
 private:
   Ui::TextInfoBox *ui;
-  textInf *data;
+  textInformation *data;
   QFont data_intern;
   QPalette normalColor;
   QPalette selectedColor;

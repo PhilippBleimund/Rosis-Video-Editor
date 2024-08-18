@@ -1,6 +1,7 @@
 #include "textInformation.h"
+#include "textinfobox.h"
 
-textInformation::textInformation(std::string text, QPoint pos, QVector2D delta,
+textInformation::textInformation(std::string text, QPoint pos, QPoint delta,
                                  QFont font, cv::Scalar color, int frameStart,
                                  int frameEnd, TextInfoBox *uiElement) {
   this->text = text;
@@ -16,6 +17,7 @@ textInformation::textInformation(std::string text, QPoint pos, QVector2D delta,
 std::string textInformation::getText() {
   return this->text;
 }
+
 QPoint textInformation::getPosition() {
   return this->pos;
 }
@@ -26,7 +28,7 @@ cv::Point2d textInformation::getPosition_as_cvPoint() {
   return point;
 }
 
-QVector2D textInformation::getDelta() {
+QPoint textInformation::getDelta() {
   return this->delta;
 }
 QFont textInformation::getFont() {
@@ -43,6 +45,18 @@ int textInformation::getFrameEnd() {
 }
 TextInfoBox *textInformation::getUiElement() {
   return this->uiElement;
+}
+
+void textInformation::setText(std::string new_text) {
+  this->text = new_text;
+}
+
+void textInformation::setFont(QFont new_font) {
+  this->fontDesc = new_font;
+}
+
+void textInformation::setDelta(QPoint new_delta) {
+  this->delta = new_delta;
 }
 
 PangoFontDescription *textInformation::getFont_as_Pango() {
@@ -90,7 +104,7 @@ PangoFontDescription *textInformation::getFont_as_Pango() {
 }
 
 void textInformation::applyDelta() {
-  this->pos = this->pos + this->delta.toPoint();
+  this->pos = this->pos + this->delta;
   this->delta.setX(0);
   this->delta.setY(0);
 }

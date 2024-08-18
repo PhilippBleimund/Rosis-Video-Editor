@@ -80,13 +80,8 @@ void CustomGraphicsView::mouseMoveEvent(QMouseEvent *event) {
     }
     move_op sig;
     sig.start = this->start;
-    sig.x_transformed = new_pos.x();
-    sig.y_transformed = new_pos.y();
-    sig.x_delta = new_pos.x() - this->start_transformed.x();
-    sig.y_delta = new_pos.y() - this->start_transformed.y();
-
-    qDebug() << sig.x_delta << "  " << sig.y_delta;
-    qDebug() << sig.x_transformed << "  " << sig.y_transformed;
+    sig.transformed = new_pos;
+    sig.delta = new_pos - this->start_transformed;
 
     emit mouseMoved(sig);
   }

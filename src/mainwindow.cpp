@@ -173,7 +173,7 @@ void MainWindow::restartVideo() {
 void MainWindow::textSelected(TextInfoBox *current) {
   // load text into editor
   this->current_selected = current;
-  this->ui->textEdit->setText(QString::fromUtf8(current->getData()->text));
+  this->ui->textEdit->setText(QString::fromUtf8(current->getData()->getText()));
 }
 
 void MainWindow::textDeselected(TextInfoBox *current) {
@@ -200,8 +200,7 @@ void MainWindow::textTextUpdated() {
 
 void MainWindow::textMoved(move_op event) {
   if (video.isOpened() && current_selected != nullptr) {
-    current_selected->getData()->x_delta = event.x_delta;
-    current_selected->getData()->y_delta = event.y_delta;
+    current_selected->getData()->setDelta(event.delta);
 
     this->video.repaintFrame();
     pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));

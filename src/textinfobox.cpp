@@ -1,4 +1,5 @@
 #include "textinfobox.h"
+#include "textInformation.h"
 #include "ui_textinfobox.h"
 #include <QFontDialog>
 #include <QObject>
@@ -11,11 +12,11 @@
 #include <qpalette.h>
 #include <qtmetamacros.h>
 
-TextInfoBox::TextInfoBox(textInf *data, QWidget *parent)
+TextInfoBox::TextInfoBox(textInformation *data, QWidget *parent)
     : QWidget(parent), ui(new Ui::TextInfoBox) {
   ui->setupUi(this);
   this->data = data;
-  this->ui->label->setText(QString::fromUtf8(data->text));
+  this->ui->label->setText(QString::fromUtf8(data->getText()));
 
   data_intern = *new QFont();
 
@@ -36,10 +37,10 @@ TextInfoBox::~TextInfoBox() {
 
 void TextInfoBox::setText(QString text) {
   this->ui->label->setText(text);
-  this->data->text = text.toStdString();
+  this->data->setText(text.toStdString());
 }
 
-textInf *TextInfoBox::getData() {
+textInformation *TextInfoBox::getData() {
   return this->data;
 }
 
@@ -50,7 +51,7 @@ void TextInfoBox::updateFont() {
     // the user clicked OK and font is set to the font the user selected
     data_intern = font;
     // update textInf
-    data->fontDesc = font;
+    data->setFont(font);
 
     emit updated(this);
   } else {

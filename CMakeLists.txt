@@ -55,6 +55,8 @@ set(PROJECT_SOURCES
         src/textinfobox.ui
         src/customGraphicsView.h
         src/customGraphicsView.cpp
+        src/textInformation.h
+        src/textInformation.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
