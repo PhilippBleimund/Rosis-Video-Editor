@@ -81,6 +81,12 @@ void MainWindow::setUpActions() {
   // when text is released changed get applied
   QObject::connect(graphicsView, SIGNAL(mouseReleased()), this,
                    SLOT(textReleased()));
+
+  QObject::connect(ui->actionUndo, SIGNAL(triggered()), this,
+                   SLOT(processUndo()));
+
+  QObject::connect(ui->actionRedo, SIGNAL(triggered()), this,
+                   SLOT(processRedo()));
 }
 
 void MainWindow::openDialog() {
@@ -216,4 +222,10 @@ void MainWindow::textReleased() {
   if (video.isOpened() && current_selected != nullptr) {
     current_selected->getData()->applyDelta();
   }
+}
+
+void MainWindow::processUndo() {
+}
+
+void MainWindow::processRedo() {
 }

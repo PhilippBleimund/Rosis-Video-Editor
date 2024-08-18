@@ -48,6 +48,9 @@ public slots:
   void textMoved(move_op);
   void textReleased();
 
+  void processUndo();
+  void processRedo();
+
 protected:
   void setUpActions();
   void closeEvent(QCloseEvent *);
