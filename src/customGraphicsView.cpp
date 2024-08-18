@@ -62,20 +62,15 @@ QPoint CustomGraphicsView::calcTransformedPos(QPoint pos, QSize source,
   }
 
   // compensate for white space
-  float new_x =
-      (float)pos.x() - ((float)(view.width() - scaled_source.width()) / 2.);
-  float new_y =
-      (float)pos.y() - ((float)(view.height() - scaled_source.height()) / 2.);
-  // scale to source size
-  new_x =
-      (new_x / (float)(view.width() - (view.width() - scaled_source.width())) *
-       (float)source.width());
-  new_y = (new_y /
-           (float)(view.height() - (view.height() - scaled_source.height())) *
-           (float)source.height());
+  float new_x = static_cast<float>(pos.x() - x_white);
+  float new_y = static_cast<float>(pos.y() - y_white);
+  new_x = (new_x / static_cast<float>(scaled_source.width())) *
+          static_cast<float>(source.width());
+  new_y = (new_y / static_cast<float>(scaled_source.height())) *
+          static_cast<float>(source.height());
 
-  new_pos.setX((int)new_x);
-  new_pos.setY((int)new_y);
+  new_pos.setX(static_cast<int>(std::round(new_x)));
+  new_pos.setY(static_cast<int>(std::round(new_y)));
 
   return new_pos;
 }
