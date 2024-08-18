@@ -50,6 +50,8 @@
    <addaction name="actionFontDialog"/>
    <addaction name="actionPlay_Video"/>
    <addaction name="actionStop_Video"/>
+   <addaction name="actionGoBack"/>
+   <addaction name="actionGoForward"/>
   </widget>
   <widget class="QDockWidget" name="text_dockWidget">
    <property name="sizePolicy">
@@ -226,6 +228,34 @@
    </property>
    <property name="toolTip">
     <string>Stop Video</string>
+   </property>
+  </action>
+  <action name="actionGoBack">
+   <property name="icon">
+    <iconset theme="edit-undo"/>
+   </property>
+   <property name="text">
+    <string> </string>
+   </property>
+   <property name="toolTip">
+    <string>go back one step</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionGoForward">
+   <property name="icon">
+    <iconset theme="edit-redo"/>
+   </property>
+   <property name="text">
+    <string> </string>
+   </property>
+   <property name="toolTip">
+    <string>redo the last step</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
  </widget>
