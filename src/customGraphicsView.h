@@ -23,6 +23,7 @@ public slots:
 
 signals:
   void mouseMoved(move_op);
+  void mouseReleased();
 
 protected:
   void mousePressEvent(QMouseEvent *);

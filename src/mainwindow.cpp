@@ -77,6 +77,10 @@ void MainWindow::setUpActions() {
   // when move is detected try to move text
   QObject::connect(graphicsView, SIGNAL(mouseMoved(move_op)), this,
                    SLOT(textMoved(move_op)));
+
+  // when text is released changed get applied
+  QObject::connect(graphicsView, SIGNAL(mouseReleased()), this,
+                   SLOT(textReleased()));
 }
 
 void MainWindow::openDialog() {
@@ -205,5 +209,11 @@ void MainWindow::textMoved(move_op event) {
     this->video.repaintFrame();
     pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
     this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
+  }
+}
+
+void MainWindow::textReleased() {
+  if (video.isOpened() && current_selected != nullptr) {
+    current_selected->getData()->applyDelta();
   }
 }

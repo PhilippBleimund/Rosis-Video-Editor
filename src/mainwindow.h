@@ -46,6 +46,7 @@ public slots:
   void textAdded();
   void textTextUpdated();
   void textMoved(move_op);
+  void textReleased();
 
 protected:
   void setUpActions();

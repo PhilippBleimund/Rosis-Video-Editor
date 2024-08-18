@@ -38,6 +38,9 @@ void CustomGraphicsView::mousePressEvent(QMouseEvent *event) {
 void CustomGraphicsView::mouseReleaseEvent(QMouseEvent *event) {
   if (event->button() == Qt::LeftButton) {
     is_pressed = false;
+    if (event->pos() != this->start) {
+      emit mouseReleased();
+    }
   }
 }
 
