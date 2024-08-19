@@ -1,5 +1,7 @@
 #include "textInformation.h"
 #include "textinfobox.h"
+#include <algorithm>
+#include <memory>
 
 textInformation::textInformation(std::string text, QPoint pos, QPoint delta,
                                  QFont font, cv::Scalar color, int frameStart,
@@ -12,6 +14,18 @@ textInformation::textInformation(std::string text, QPoint pos, QPoint delta,
   this->frameStart = frameStart;
   this->frameEnd = frameEnd;
   this->uiElement = uiElement;
+}
+
+textInformation::textInformation(const textInformation *a) {
+
+  this->text = a->text;
+  this->pos = a->pos;
+  this->delta = a->delta;
+  this->fontDesc = a->fontDesc;
+  this->color = a->color;
+  this->frameStart = a->frameStart;
+  this->frameEnd = a->frameEnd;
+  this->uiElement = a->uiElement;
 }
 
 std::string textInformation::getText() {
@@ -107,4 +121,70 @@ void textInformation::applyDelta() {
   this->pos = this->pos + this->delta;
   this->delta.setX(0);
   this->delta.setY(0);
+}
+
+void textInformation::goToPast() {
+  // create copy of this
+  std::unique_ptr<textInformation> copy_uniq(new textInformation(*this));
+  // add copy to future
+  this->future->push_back(std::move(copy_uniq));
+
+  // get past
+  textInformation *old_element = this->past->back().get();
+
+  // apply changes
+  this->text = old_element->text;
+  this->pos = old_element->pos;
+  this->delta = old_element->delta;
+  this->fontDesc = old_element->fontDesc;
+  this->color = old_element->color;
+  this->frameStart = old_element->frameStart;
+  this->frameEnd = old_element->frameEnd;
+
+  // remove object from past
+  this->past->pop_back();
+}
+
+void textInformation::goToFuture() {
+  // create copy of this
+  std::unique_ptr<textInformation> copy_uniq(new textInformation(*this));
+  // add copy to past
+  this->past->push_back(std::move(copy_uniq));
+
+  // get futue
+  textInformation *new_element = this->future->back().get();
+
+  // apply changes
+  this->text = new_element->text;
+  this->pos = new_element->pos;
+  this->delta = new_element->delta;
+  this->fontDesc = new_element->fontDesc;
+  this->color = new_element->color;
+  this->frameStart = new_element->frameStart;
+  this->frameEnd = new_element->frameEnd;
+
+  // remove object from past
+  this->future->pop_back();
+}
+
+void textInformation::createPast() {
+  // create copy of this
+  std::unique_ptr<textInformation> copy_uniq(new textInformation(*this));
+  // check if MAX_SAVES is exceeded
+  if (this->past->size() >= MAX_SAVES) {
+    this->past->erase(this->past->begin());
+  }
+  // add copy to past
+  this->past->push_back(std::move(copy_uniq));
+}
+
+void textInformation::createFuture() {
+  // create copy of this
+  std::unique_ptr<textInformation> copy_uniq(new textInformation(*this));
+  // check if MAX_SAVES is exceeded
+  if (this->future->size() >= MAX_SAVES) {
+    this->future->erase(this->future->begin());
+  }
+  // add copy to past
+  this->future->push_back(std::move(copy_uniq));
 }
