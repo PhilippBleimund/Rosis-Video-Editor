@@ -40,9 +40,9 @@ private:
   int fps;
   int numFrames;
   int currFrame;
-  std::vector<std::unique_ptr<textInformation>> *textList;
+  std::vector<std::unique_ptr<textInformation>> textList;
   cv::Mat frame;
   QImage qtImage;
-  std::vector<std::unique_ptr<textInformation>> *past;
-  std::vector<std::unique_ptr<textInformation>> *future;
+  std::vector<std::unique_ptr<textInformation>> past;
+  std::vector<std::unique_ptr<textInformation>> future;
 };

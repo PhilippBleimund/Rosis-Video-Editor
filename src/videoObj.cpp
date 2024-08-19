@@ -40,14 +40,14 @@ int videoObj::addText(std::string text) {
       std::make_unique<textInformation>(
           textInformation(text, QPoint(0, 0), QPoint(0, 0), QFont(),
                           cv::Scalar(0, 0, 0), 0, 250, nullptr));
-  this->textList->push_back(std::move(newElement));
+  this->textList.push_back(std::move(newElement));
   return newElement->getUid();
 }
 
 textInformation *videoObj::getText(int uid) {
   for (std::vector<std::unique_ptr<textInformation>>::iterator i =
-           this->textList->begin();
-       i != this->textList->end(); i++) {
+           this->textList.begin();
+       i != this->textList.end(); i++) {
     if (i->get()->getUid() == uid) {
       return i->get();
     }
@@ -123,8 +123,8 @@ bool videoObj::updateFrame() {
 
   // check if text is available
   for (std::vector<std::unique_ptr<textInformation>>::iterator i =
-           this->past->begin();
-       i != this->past->end(); i++) {
+           this->past.begin();
+       i != this->past.end(); i++) {
     textInformation *textObj = i->get();
     if (currFrame >= textObj->getFrameStart() &&
         currFrame <= textObj->getFrameEnd()) {
@@ -154,70 +154,70 @@ void videoObj::setToStart() {
 }
 
 void videoObj::goToPast() {
-  if (!this->past->size()) {
+  if (!this->past.size()) {
     return;
   }
   // get last modified state
   std::vector<std::unique_ptr<textInformation>>::iterator latest =
-      this->past->end();
+      this->past.end();
 
   // get element with corresponding uid
   std::vector<std::unique_ptr<textInformation>>::iterator element;
   for (std::vector<std::unique_ptr<textInformation>>::iterator i =
-           this->past->begin();
-       i != this->past->end(); i++) {
+           this->past.begin();
+       i != this->past.end(); i++) {
     if (i->get()->getUid() == latest->get()->getUid()) {
       element = i;
     }
   }
 
   // move element to future
-  this->future->push_back(std::move(*element));
-  this->textList->erase(element);
+  this->future.push_back(std::move(*element));
+  this->textList.erase(element);
 
   // replace present with past
-  this->textList->push_back(std::move(*latest));
-  this->past->erase(latest);
+  this->textList.push_back(std::move(*latest));
+  this->past.erase(latest);
 }
 
 void videoObj::goToFuture() {
-  if (!this->future->size()) {
+  if (!this->future.size()) {
     return;
   }
   // get first future state
   std::vector<std::unique_ptr<textInformation>>::iterator latest =
-      this->future->end();
+      this->future.end();
 
   // get element with corresponding uid
   std::vector<std::unique_ptr<textInformation>>::iterator element;
   for (std::vector<std::unique_ptr<textInformation>>::iterator i =
-           this->future->begin();
-       i != this->future->end(); i++) {
+           this->future.begin();
+       i != this->future.end(); i++) {
     if (i->get()->getUid() == latest->get()->getUid()) {
       element = i;
     }
   }
 
   // move element to past
-  this->past->push_back(std::move(*element));
-  this->textList->erase(element);
+  this->past.push_back(std::move(*element));
+  this->textList.erase(element);
 
   // replace present with future
-  this->textList->push_back(std::move(*latest));
-  this->future->erase(latest);
+  this->textList.push_back(std::move(*latest));
+  this->future.erase(latest);
 }
 
 void videoObj::createPast(int uid) {
   // remove oldest element
-  if (this->past->size() >= MAX_SAVES) {
-    this->past->erase(this->past->begin());
+  if (this->past.size() >= MAX_SAVES) {
+    this->past.erase(this->past.begin());
   }
 
   // find element to back up
   std::vector<std::unique_ptr<textInformation>>::iterator element;
   for (std::vector<std::unique_ptr<textInformation>>::iterator i =
-           this->past->begin();
-       i != this->past->end(); i++) {
+           this->past.begin();
+       i != this->past.end(); i++) {
     if (i->get()->getUid() == uid) {
       element = i;
     }
@@ -227,11 +227,11 @@ void videoObj::createPast(int uid) {
   std::unique_ptr<textInformation> copy =
       std::make_unique<textInformation>(textInformation(element->get()));
   // put copy on past timeline
-  this->past->push_back(std::move(copy));
+  this->past.push_back(std::move(copy));
   // clear Future since new timeline started
   clearFuture();
 }
 
 void videoObj::clearFuture() {
-  this->future->clear();
+  this->future.clear();
 }
