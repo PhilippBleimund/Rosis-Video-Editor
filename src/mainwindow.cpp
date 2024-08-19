@@ -125,6 +125,7 @@ void MainWindow::textAdded() {
 
     TextInfoBox *box =
         new TextInfoBox(video.getText(uid), ui->scrollAreaWidgetContents);
+    video.getText(uid)->setUiElement(box);
     ui->verticalLayout->addWidget(box);
     QObject::connect(box, SIGNAL(selected(TextInfoBox *)), this,
                      SLOT(textSelected(TextInfoBox *)));
@@ -195,12 +196,15 @@ void MainWindow::textFontUpdated(TextInfoBox *) {
   if (!video.isOpened())
     return;
 
+  // this->video.createPast(current_selected->getData()->getUid());
+
   this->video.repaintFrame();
   pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
   this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 }
 
 void MainWindow::textTextUpdated() {
+  // this->video.createPast(current_selected->getData()->getUid());
   this->current_selected->setText(ui->textEdit->toPlainText());
 
   this->video.repaintFrame();
@@ -220,12 +224,21 @@ void MainWindow::textMoved(move_op event) {
 
 void MainWindow::textReleased() {
   if (video.isOpened() && current_selected != nullptr) {
+    this->video.createPast(current_selected->getData()->getUid());
     current_selected->getData()->applyDelta();
   }
 }
 
 void MainWindow::processUndo() {
+  this->video.goToPast();
+  this->video.repaintFrame();
+  pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
+  this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 }
 
 void MainWindow::processRedo() {
+  this->video.goToFuture();
+  this->video.repaintFrame();
+  pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
+  this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
 }

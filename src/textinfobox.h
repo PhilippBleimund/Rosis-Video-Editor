@@ -22,6 +22,7 @@ public:
   ~TextInfoBox();
   void setText(QString);
   textInformation *getData();
+  void setData(textInformation *);
 
 public slots:
   void updateFont();

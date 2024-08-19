@@ -44,6 +44,10 @@ textInformation *TextInfoBox::getData() {
   return this->data;
 }
 
+void TextInfoBox::setData(textInformation *newData) {
+  this->data = newData;
+}
+
 void TextInfoBox::updateFont() {
   bool ok;
   QFont font = QFontDialog::getFont(&ok, data_intern, this);

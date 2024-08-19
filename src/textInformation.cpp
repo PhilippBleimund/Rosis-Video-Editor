@@ -15,15 +15,20 @@ textInformation::textInformation(std::string text, QPoint pos, QPoint delta,
   this->uiElement = uiElement;
 }
 
-textInformation::textInformation(const textInformation *a) {
+textInformation::textInformation(const textInformation *a, bool delta_null) {
 
   this->text = a->text;
   this->pos = a->pos;
-  this->delta = a->delta;
+  if (!delta_null) {
+    this->delta = a->delta;
+  } else {
+    this->delta = QPoint(0, 0);
+  }
   this->fontDesc = a->fontDesc;
   this->color = a->color;
   this->frameStart = a->frameStart;
   this->frameEnd = a->frameEnd;
+  this->uid = a->uid;
   this->uiElement = a->uiElement;
 }
 
@@ -36,7 +41,6 @@ void textInformation::copyFrom(const textInformation *a) {
   this->color = a->color;
   this->frameStart = a->frameStart;
   this->frameEnd = a->frameEnd;
-  this->uiElement = a->uiElement;
 }
 
 std::string textInformation::getText() {
@@ -68,6 +72,7 @@ int textInformation::getFrameStart() {
 int textInformation::getFrameEnd() {
   return this->frameEnd;
 }
+
 TextInfoBox *textInformation::getUiElement() {
   return this->uiElement;
 }
@@ -82,6 +87,10 @@ void textInformation::setFont(QFont new_font) {
 
 void textInformation::setDelta(QPoint new_delta) {
   this->delta = new_delta;
+}
+
+void textInformation::setUiElement(TextInfoBox *new_ui) {
+  this->uiElement = new_ui;
 }
 
 PangoFontDescription *textInformation::getFont_as_Pango() {
@@ -128,8 +137,8 @@ PangoFontDescription *textInformation::getFont_as_Pango() {
   return pangoDesc;
 }
 
-void textInformation::applyDelta() {
-  this->pos = this->pos + this->delta;
+void textInformation::applyDelta(QPoint extra) {
+  this->pos = this->pos + this->delta + extra;
   this->delta.setX(0);
   this->delta.setY(0);
 }

@@ -15,10 +15,10 @@ class TextInfoBox;
 
 class textInformation : public timeObj {
 public:
-  textInformation();
+  textInformation() {};
   textInformation(std::string, QPoint, QPoint, QFont, cv::Scalar, int, int,
-                  TextInfoBox *);
-  textInformation(const textInformation *);
+                  TextInfoBox * = nullptr);
+  textInformation(const textInformation *, bool = false);
   void copyFrom(const textInformation *);
 
   std::string getText();
@@ -35,8 +35,9 @@ public:
   void setText(std::string);
   void setFont(QFont);
   void setDelta(QPoint);
+  void setUiElement(TextInfoBox *);
 
-  void applyDelta();
+  void applyDelta(QPoint = QPoint(0, 0));
 
 private:
   std::string text;
