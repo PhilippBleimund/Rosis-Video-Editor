@@ -1,26 +1,25 @@
 #pragma once
 
-#include "timeline.h"
+#include "timeObj.h"
 #include <QFont>
 #include <QPoint>
-#include <memory>
 #include <opencv2/core/types.hpp>
 #include <opencv2/opencv.hpp>
 #include <pango/pangocairo.h>
 #include <qpoint.h>
 #include <string>
-#include <vector>
 
 #define MAX_SAVES 20
 
 class TextInfoBox;
 
-class textInformation : public timeline {
+class textInformation : public timeObj {
 public:
   textInformation();
   textInformation(std::string, QPoint, QPoint, QFont, cv::Scalar, int, int,
                   TextInfoBox *);
   textInformation(const textInformation *);
+  void copyFrom(const textInformation *);
 
   std::string getText();
   QPoint getPosition();
@@ -39,11 +38,6 @@ public:
 
   void applyDelta();
 
-  virtual void goToPast();
-  virtual void goToFuture();
-  virtual void createPast();
-  virtual void createFuture();
-
 private:
   std::string text;
   QPoint pos;
@@ -53,6 +47,4 @@ private:
   int frameStart;
   int frameEnd;
   TextInfoBox *uiElement;
-  std::vector<std::unique_ptr<textInformation>> *past;
-  std::vector<std::unique_ptr<textInformation>> *future;
 };

@@ -2,6 +2,7 @@
 #include "glib-object.h"
 #include "pango/pango-font.h"
 #include "textInformation.h"
+#include <memory>
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/videoio.hpp>
@@ -12,6 +13,7 @@
 #include <qimage.h>
 #include <qvideowidget.h>
 #include <string>
+#include <vector>
 
 void videoObj::setFPS(int f) {
   this->fps = f;
@@ -34,15 +36,23 @@ QImage videoObj::getImage() {
 }
 
 int videoObj::addText(std::string text) {
-  textInformation newElement =
-      textInformation(text, QPoint(0, 0), QPoint(0, 0), QFont(),
-                      cv::Scalar(0, 0, 0), 0, 250, nullptr);
-  this->textList.push_back(newElement);
-  return textList.size() - 1;
+  std::unique_ptr<textInformation> newElement =
+      std::make_unique<textInformation>(
+          textInformation(text, QPoint(0, 0), QPoint(0, 0), QFont(),
+                          cv::Scalar(0, 0, 0), 0, 250, nullptr));
+  this->textList->push_back(std::move(newElement));
+  return newElement->getUid();
 }
 
-textInformation *videoObj::getText(int index) {
-  return &this->textList.at(index);
+textInformation *videoObj::getText(int uid) {
+  for (std::vector<std::unique_ptr<textInformation>>::iterator i =
+           this->textList->begin();
+       i != this->textList->end(); i++) {
+    if (i->get()->getUid() == uid) {
+      return i->get();
+    }
+  }
+  return nullptr;
 }
 
 bool videoObj::open(const cv::String &filename) {
@@ -112,13 +122,15 @@ bool videoObj::updateFrame() {
   }
 
   // check if text is available
-  for (int i = 0; i < textList.size(); i++) {
-    textInformation textObj = textList[i];
-    if (currFrame >= textObj.getFrameStart() &&
-        currFrame <= textObj.getFrameEnd()) {
+  for (std::vector<std::unique_ptr<textInformation>>::iterator i =
+           this->past->begin();
+       i != this->past->end(); i++) {
+    textInformation *textObj = i->get();
+    if (currFrame >= textObj->getFrameStart() &&
+        currFrame <= textObj->getFrameEnd()) {
       // text can be printed
-      putTextCairo(frame, textObj.getText(), textObj.getPosition_as_cvPoint(),
-                   textObj.getFont_as_Pango(), textObj.getColor());
+      putTextCairo(frame, textObj->getText(), textObj->getPosition_as_cvPoint(),
+                   textObj->getFont_as_Pango(), textObj->getColor());
     }
   }
 
@@ -139,4 +151,87 @@ void videoObj::setToStart() {
   this->set(cv::CAP_PROP_POS_FRAMES, 0);
   currFrame = 0;
   updateFrame();
+}
+
+void videoObj::goToPast() {
+  if (!this->past->size()) {
+    return;
+  }
+  // get last modified state
+  std::vector<std::unique_ptr<textInformation>>::iterator latest =
+      this->past->end();
+
+  // get element with corresponding uid
+  std::vector<std::unique_ptr<textInformation>>::iterator element;
+  for (std::vector<std::unique_ptr<textInformation>>::iterator i =
+           this->past->begin();
+       i != this->past->end(); i++) {
+    if (i->get()->getUid() == latest->get()->getUid()) {
+      element = i;
+    }
+  }
+
+  // move element to future
+  this->future->push_back(std::move(*element));
+  this->textList->erase(element);
+
+  // replace present with past
+  this->textList->push_back(std::move(*latest));
+  this->past->erase(latest);
+}
+
+void videoObj::goToFuture() {
+  if (!this->future->size()) {
+    return;
+  }
+  // get first future state
+  std::vector<std::unique_ptr<textInformation>>::iterator latest =
+      this->future->end();
+
+  // get element with corresponding uid
+  std::vector<std::unique_ptr<textInformation>>::iterator element;
+  for (std::vector<std::unique_ptr<textInformation>>::iterator i =
+           this->future->begin();
+       i != this->future->end(); i++) {
+    if (i->get()->getUid() == latest->get()->getUid()) {
+      element = i;
+    }
+  }
+
+  // move element to past
+  this->past->push_back(std::move(*element));
+  this->textList->erase(element);
+
+  // replace present with future
+  this->textList->push_back(std::move(*latest));
+  this->future->erase(latest);
+}
+
+void videoObj::createPast(int uid) {
+  // remove oldest element
+  if (this->past->size() >= MAX_SAVES) {
+    this->past->erase(this->past->begin());
+  }
+
+  // find element to back up
+  std::vector<std::unique_ptr<textInformation>>::iterator element;
+  for (std::vector<std::unique_ptr<textInformation>>::iterator i =
+           this->past->begin();
+       i != this->past->end(); i++) {
+    if (i->get()->getUid() == uid) {
+      element = i;
+    }
+  }
+
+  // create copy
+  std::unique_ptr<textInformation> copy =
+      std::make_unique<textInformation>(textInformation(element->get()));
+  // put copy on past timeline
+  this->past->push_back(std::move(copy));
+  // clear Future since new timeline started
+  clearFuture();
+}
+
+void videoObj::clearFuture() {
+  this->future->clear();
 }

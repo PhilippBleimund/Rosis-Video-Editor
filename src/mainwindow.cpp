@@ -121,10 +121,10 @@ void MainWindow::textAdded() {
   QString text = QInputDialog::getMultiLineText(
       this, tr("QInputDialog::getText()"), tr("insert Text"), "", &ok);
   if (ok && !text.isEmpty()) {
-    int index = video.addText(text.toStdString());
+    int uid = video.addText(text.toStdString());
 
     TextInfoBox *box =
-        new TextInfoBox(video.getText(index), ui->scrollAreaWidgetContents);
+        new TextInfoBox(video.getText(uid), ui->scrollAreaWidgetContents);
     ui->verticalLayout->addWidget(box);
     QObject::connect(box, SIGNAL(selected(TextInfoBox *)), this,
                      SLOT(textSelected(TextInfoBox *)));
