@@ -192,12 +192,11 @@ void MainWindow::textDeselected(TextInfoBox *current) {
   this->current_selected = NULL;
 }
 
-void MainWindow::textFontUpdated(TextInfoBox *) {
+void MainWindow::textFontUpdated(TextInfoBox *current) {
   if (!video.isOpened())
     return;
 
-  if (current_selected != nullptr)
-    this->video.createPast(current_selected->getData()->getUid());
+  this->video.createPast(current->getData()->getUid());
 
   this->video.repaintFrame();
   pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
