@@ -189,7 +189,7 @@ void MainWindow::textSelected(TextInfoBox *current) {
 
 void MainWindow::textDeselected(TextInfoBox *current) {
   this->ui->textEdit->setText(QString::fromUtf8(""));
-  this->current_selected = NULL;
+  this->current_selected = nullptr;
 }
 
 void MainWindow::textFontUpdated(TextInfoBox *current) {
