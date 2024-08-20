@@ -51,9 +51,8 @@ void TextInfoBox::updateFont() {
   QFont font = QFontDialog::getFont(&ok, data->getFont(), this);
   if (ok) {
     // the user clicked OK and font is set to the font the user selected
-    data->setFont(font);
 
-    emit updated(this);
+    emit updated(this, font);
   } else {
     // the user canceled the dialog; font is set to the initial
     // value, in this case Helvetica [Cronyx], 10

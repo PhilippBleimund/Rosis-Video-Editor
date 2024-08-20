@@ -131,10 +131,10 @@ void MainWindow::textAdded() {
                      SLOT(textSelected(TextInfoBox *)));
     QObject::connect(box, SIGNAL(deselected(TextInfoBox *)), this,
                      SLOT(textDeselected(TextInfoBox *)));
-    QObject::connect(box, SIGNAL(updated(TextInfoBox *)), this,
-                     SLOT(textFontUpdated(TextInfoBox *)));
+    QObject::connect(box, SIGNAL(updated(TextInfoBox *, QFont)), this,
+                     SLOT(textFontUpdated(TextInfoBox *, QFont)));
 
-    textFontUpdated(box);
+    textFontUpdated(box, QFont());
   }
 }
 
@@ -192,11 +192,13 @@ void MainWindow::textDeselected(TextInfoBox *current) {
   this->current_selected = nullptr;
 }
 
-void MainWindow::textFontUpdated(TextInfoBox *current) {
+void MainWindow::textFontUpdated(TextInfoBox *current, QFont selected) {
   if (!video.isOpened())
     return;
 
   this->video.createPast(current->getData()->getUid());
+
+  current->getData()->setFont(selected);
 
   this->video.repaintFrame();
   pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));

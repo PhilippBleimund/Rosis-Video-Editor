@@ -28,7 +28,7 @@ public slots:
   void updateFont();
 
 signals:
-  void updated(TextInfoBox *);
+  void updated(TextInfoBox *, QFont);
   void selected(TextInfoBox *);
   void deselected(TextInfoBox *);
 
