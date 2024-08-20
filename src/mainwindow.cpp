@@ -188,7 +188,9 @@ void MainWindow::textSelected(TextInfoBox *current) {
 }
 
 void MainWindow::textDeselected(TextInfoBox *current) {
+  this->ui->textEdit->blockSignals(true);
   this->ui->textEdit->setText(QString::fromUtf8(""));
+  this->ui->textEdit->blockSignals(false);
   this->current_selected = nullptr;
 }
 
