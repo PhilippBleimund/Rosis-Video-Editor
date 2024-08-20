@@ -18,8 +18,6 @@ TextInfoBox::TextInfoBox(textInformation *data, QWidget *parent)
   this->data = data;
   this->ui->label->setText(QString::fromUtf8(data->getText()));
 
-  data_intern = *new QFont();
-
   this->setAutoFillBackground(true);
   normalColor = QPalette();
   selectedColor = QPalette();
@@ -50,11 +48,9 @@ void TextInfoBox::setData(textInformation *newData) {
 
 void TextInfoBox::updateFont() {
   bool ok;
-  QFont font = QFontDialog::getFont(&ok, data_intern, this);
+  QFont font = QFontDialog::getFont(&ok, data->getFont(), this);
   if (ok) {
     // the user clicked OK and font is set to the font the user selected
-    data_intern = font;
-    // update textInf
     data->setFont(font);
 
     emit updated(this);

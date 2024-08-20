@@ -38,7 +38,6 @@ protected:
 private:
   Ui::TextInfoBox *ui;
   textInformation *data;
-  QFont data_intern;
   QPalette normalColor;
   QPalette selectedColor;
   bool isSelected;
