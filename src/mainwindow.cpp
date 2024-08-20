@@ -196,7 +196,8 @@ void MainWindow::textFontUpdated(TextInfoBox *) {
   if (!video.isOpened())
     return;
 
-  // this->video.createPast(current_selected->getData()->getUid());
+  if (current_selected != nullptr)
+    this->video.createPast(current_selected->getData()->getUid());
 
   this->video.repaintFrame();
   pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
@@ -204,7 +205,8 @@ void MainWindow::textFontUpdated(TextInfoBox *) {
 }
 
 void MainWindow::textTextUpdated() {
-  // this->video.createPast(current_selected->getData()->getUid());
+  if (current_selected != nullptr)
+    this->video.createPast(current_selected->getData()->getUid());
   this->current_selected->setText(ui->textEdit->toPlainText());
 
   this->video.repaintFrame();
