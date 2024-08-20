@@ -172,6 +172,7 @@ void videoObj::goToPast() {
   this->textList.erase(element);
 
   //// replace present with past
+  (*latest)->getUiElement()->setData((*latest).get());
   this->textList.push_back(std::move(*latest));
   this->past.erase(latest);
 }
@@ -182,14 +183,13 @@ void videoObj::goToFuture() {
   }
   // get first future state
   std::vector<std::unique_ptr<textInformation>>::iterator latest =
-      this->future.end();
+      --this->future.end();
 
   // get element with corresponding uid
   std::vector<std::unique_ptr<textInformation>>::iterator element;
-  for (std::vector<std::unique_ptr<textInformation>>::iterator i =
-           this->future.begin();
-       i != this->future.end(); ++i) {
-    if (i->get()->getUid() == latest->get()->getUid()) {
+  for (auto i = std::begin(this->textList); i != std::end(this->textList);
+       ++i) {
+    if ((*i)->getUid() == (*latest)->getUid()) {
       element = i;
     }
   }
@@ -199,6 +199,7 @@ void videoObj::goToFuture() {
   this->textList.erase(element);
 
   // replace present with future
+  (*latest)->getUiElement()->setData((*latest).get());
   this->textList.push_back(std::move(*latest));
   this->future.erase(latest);
 }
@@ -220,7 +221,6 @@ void videoObj::createPast(int uid) {
   // create copy
   std::unique_ptr<textInformation> copy =
       std::make_unique<textInformation>(element->get(), true);
-  copy->getUiElement()->setData(copy.get());
   // put copy on past timeline
   this->past.push_back(std::move(copy));
   // clear Future since new timeline started
