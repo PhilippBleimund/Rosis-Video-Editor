@@ -184,7 +184,9 @@ void MainWindow::restartVideo() {
 void MainWindow::textSelected(TextInfoBox *current) {
   // load text into editor
   this->current_selected = current;
+  this->ui->textEdit->blockSignals(true);
   this->ui->textEdit->setText(QString::fromUtf8(current->getData()->getText()));
+  this->ui->textEdit->blockSignals(false);
 }
 
 void MainWindow::textDeselected(TextInfoBox *current) {
