@@ -87,6 +87,9 @@ void MainWindow::setUpActions() {
 
   QObject::connect(ui->actionRedo, SIGNAL(triggered()), this,
                    SLOT(processRedo()));
+
+  QObject::connect(video.getSignaler(), SIGNAL(requestTextInfobox()), this,
+                   SLOT(createTextInfobox()));
 }
 
 void MainWindow::openDialog() {
@@ -209,6 +212,9 @@ void MainWindow::textFontUpdated(TextInfoBox *current, QFont selected) {
   this->video.repaintFrame();
   pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
   this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
+}
+
+void MainWindow::textDeleted(TextInfoBox *deleted) {
 }
 
 void MainWindow::textTextUpdated() {

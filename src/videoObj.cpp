@@ -2,6 +2,7 @@
 #include "glib-object.h"
 #include "pango/pango-font.h"
 #include "textInformation.h"
+#include <algorithm>
 #include <memory>
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/core/types.hpp>
@@ -229,4 +230,12 @@ void videoObj::createPast(int uid) {
 
 void videoObj::clearFuture() {
   this->future.clear();
+}
+
+void videoObj::deleteText(int uid) {
+  this->textList.erase(
+      std::remove_if(this->textList.begin(), this->textList.end(),
+                     [&uid](std::unique_ptr<textInformation> &i) {
+                       return i->getUid() == uid;
+                     }));
 }

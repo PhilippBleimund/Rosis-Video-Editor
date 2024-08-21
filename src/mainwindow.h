@@ -43,10 +43,12 @@ public slots:
   void textDeselected(TextInfoBox *); // Slot when text is deselected
   void textFontUpdated(TextInfoBox *, QFont); // Slot when information about
                                               // the text instance is updated
+  void textDeleted(TextInfoBox *);
   void textAdded();
   void textTextUpdated();
   void textMoved(move_op);
   void textReleased();
+  void createTextInfobox();
 
   void processUndo();
   void processRedo();
