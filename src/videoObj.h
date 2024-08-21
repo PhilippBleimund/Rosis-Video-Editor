@@ -15,8 +15,17 @@
 #include <qobjectdefs.h>
 #include <qtmetamacros.h>
 
-class videoObj : public cv::VideoCapture, timeline {
+class signaler : public QObject {
+  Q_OBJECT
+public:
+  void triggerRequestCall() {
+    emit requestTextInfobox();
+  };
+signals:
+  void requestTextInfobox();
+};
 
+class videoObj : public cv::VideoCapture, timeline {
 public:
   void setFPS(int);
   void setNumFrames(int);
@@ -26,6 +35,7 @@ public:
   int addText(std::string);
   textInformation *getText(int);
   virtual bool open(const cv::String &);
+  signaler *getSignaler();
 
   bool updateFrame(); // slot for updating the current frame
   void repaintFrame();
@@ -36,6 +46,8 @@ public:
   virtual void createPast(int);
   virtual void clearFuture();
 
+  void deleteText(int);
+
 private:
   int fps;
   int numFrames;
@@ -45,4 +57,5 @@ private:
   QImage qtImage;
   std::vector<std::unique_ptr<textInformation>> past;
   std::vector<std::unique_ptr<textInformation>> future;
+  signaler signal;
 };

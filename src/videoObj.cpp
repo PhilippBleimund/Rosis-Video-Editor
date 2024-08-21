@@ -37,11 +37,17 @@ QImage videoObj::getImage() {
   return this->qtImage;
 }
 
+signaler *videoObj::getSignaler() {
+  return &this->signal;
+}
+
 int videoObj::addText(std::string text) {
   std::unique_ptr<textInformation> newElement =
       std::make_unique<textInformation>(text, QPoint(0, 0), QPoint(0, 0),
                                         QFont(), cv::Scalar(0, 0, 0), 0, 250);
   this->textList.push_back(std::move(newElement));
+  this->signal.triggerRequestCall();
+
   return this->textList.back()->getUid();
 }
 
