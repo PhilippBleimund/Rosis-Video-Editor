@@ -26,11 +26,13 @@ public:
 
 public slots:
   void updateFont();
+  void deleteThis();
 
 signals:
   void updated(TextInfoBox *, QFont);
   void selected(TextInfoBox *);
   void deselected(TextInfoBox *);
+  void deleted(TextInfoBox *);
 
 protected:
   void mousePressEvent(QMouseEvent *);

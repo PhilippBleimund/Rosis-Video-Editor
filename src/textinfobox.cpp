@@ -27,6 +27,9 @@ TextInfoBox::TextInfoBox(textInformation *data, QWidget *parent)
 
   QObject::connect(ui->editFont_Button, SIGNAL(clicked()), this,
                    SLOT(updateFont()));
+
+  QObject::connect(ui->delete_Button, SIGNAL(clicked()), this,
+                   SLOT(deleteThis()));
 }
 
 TextInfoBox::~TextInfoBox() {
@@ -57,6 +60,10 @@ void TextInfoBox::updateFont() {
     // the user canceled the dialog; font is set to the initial
     // value, in this case Helvetica [Cronyx], 10
   }
+}
+
+void TextInfoBox::deleteThis() {
+  emit deleted(this);
 }
 
 void TextInfoBox::mousePressEvent(QMouseEvent *event) {
