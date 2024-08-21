@@ -134,7 +134,9 @@ void MainWindow::textAdded() {
     QObject::connect(box, SIGNAL(updated(TextInfoBox *, QFont)), this,
                      SLOT(textFontUpdated(TextInfoBox *, QFont)));
 
-    textFontUpdated(box, QFont());
+    this->video.repaintFrame();
+    pixmap.setPixmap(QPixmap::fromImage(video.getImage().rgbSwapped()));
+    this->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
   }
 }
 
